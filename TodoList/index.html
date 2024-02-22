@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Anta&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <h1>To-Do List</h1>
+    <form class="frm-task" id="frmTask">
+        <input id="task" type="text" placeholder="Enter a task..." required>
+        <button>ADD</button>
+    </form>
+    <div id="todos" class="todos"></div>
+
+    <script>
+        const frmTask = document.querySelector("#frmTask");
+        const inputTask=document.querySelector("#task");
+
+        const apiUrl = "https://localhost:7241/api/TodoItems";
+        let list = document.querySelector('#todos');
+
+        frmTask.onsubmit=function(e){
+            e.preventDefault();
+            const newTodo={
+                title:inputTask.value,
+                done:false
+            };
+
+            fetch(apiUrl,{
+                method:"POST",
+                body:JSON.stringify(newTodo),
+                headers:{
+                    "Content-Type":"application/json"
+                }
+            })
+            .then(res=>res.json())
+            .then(data=>{
+                console.log(data);
+                inputTask.value="";
+                listAll();
+            })
+        };
+
+        function deleteTodo(id){
+            fetch(apiUrl+"/"+id,{method:"DELETE"})
+            .then(res=>{
+                listAll();
+            })
+        }
+        function updateTodo(e,todo){
+            todo.done=e.target.checked;
+            fetch(apiUrl+"/"+todo.id,{
+                method:"PUT",
+                body:JSON.stringify(todo),
+                headers:{
+                    "Content-Type":"application/json"
+                }
+            },todo)
+            then(res=>{
+                listAll();
+            });
+        }
+
+        function listAll() {
+            fetch(apiUrl)
+                .then(res => res.json())
+                .then(data => {
+                    list.innerHTML = "";
+                    data.forEach((item, index) => {
+                        let div = document.createElement("div");
+                        let input = document.createElement("input");
+                        let span = document.createElement("span");
+                        let button = document.createElement("button");
+
+                        button.onclick=()=>deleteTodo(item.id)
+                        input.onchange=(e)=>updateTodo(e,item);
+
+                        div.className = 'todo'
+                        input.type = "checkbox";
+                        input.checked = item.done;
+                        span.textContent = item.title;
+                        button.innerHTML = "&times";
+
+                        div.append(input, span, button);
+                        list.append(div);
+                    });
+                });
+        }
+        listAll();
+    </script>
+</body>
+
+</html>

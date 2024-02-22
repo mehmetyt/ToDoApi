@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Hava Durumu</title>
+    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+
+    <h1>5 Günlük hava durumu tahmini</h1><br />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Tarih</th>
+                <th>Sıcaklık</th>
+                <th>Açıklama</th>
+            </tr>
+        </thead>
+        <tbody id="body">
+        </tbody>
+    </table>
+
+    <script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        fetch("/api/HavaDurumu")
+            .then(res => res.json())
+            .then(data => {
+                //let tbody = document.getElementById('body');
+                let tbody = document.querySelector('#body')
+                data.forEach((item, index) => {
+                    let tr = document.createElement('tr');
+                    tr.innerHTML =
+                        `<td>${index}</td> 
+                        <td>${new Date(item.tarih).toLocaleDateString('tr-TR') }</td> 
+                        <td>${item.sicaklik}°C</td> 
+                        <td>${item.aciklama}</td>`;
+                    tbody.appendChild(tr);
+                });
+            });
+    </script>
+</body>
+</html>

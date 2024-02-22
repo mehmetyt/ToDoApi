@@ -1,0 +1,14 @@
+@ToDoApi_HostAddress = http://localhost:5103
+
+GET {{ToDoApi_HostAddress}}/api/HavaDurumu/
+Accept: application/json
+
+###
+GET {{ToDoApi_HostAddress}}/api/TodoItems/
+Accept: application/json
+
+###
+GET {{ToDoApi_HostAddress}}/api/TodoItems/5
+Accept: application/json
+
+###
